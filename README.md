@@ -8,6 +8,8 @@ feel free to share this where ever, i dont particularly care...just tell them yo
 the only assurance i give on this code is that its not malicious, you accept all risks 
 
 questions, comments, or concerns, discord: Maxbrand99#5913
+if you wish to donate, 0xd32f25Dfa932b8064A81B8254E7997CAeBc85F97 on mainnet or matic
+
 
 HW wallet suggestions:
 
