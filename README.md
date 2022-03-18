@@ -8,3 +8,6 @@ feel free to share this where ever, i dont particularly care...just tell them yo
 the only assurance i give on this code is that its not malicious, you accept all risks 
 
 questions, comments, or concerns, discord: Maxbrand99#5913
+
+this is your team number and how you get it 
+![image](https://user-images.githubusercontent.com/13276167/158933307-8a156b1b-b97d-45c6-887b-7889698fd5c4.png)
