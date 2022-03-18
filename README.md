@@ -9,6 +9,8 @@ alternate guide:
 
 https://maxbrand99.notion.site/Script-Install-Guide-1bfef048044d47dc8c665bbe502a159a
 
+make sure you approve bananas. best option is go start a run via UI, and it will have you approve them
+
 feel free to share this where ever, i dont particularly care...just tell them you got it from me
 
 the only assurance i give on this code is that its not malicious, use at your own risk
