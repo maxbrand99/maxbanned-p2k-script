@@ -2,6 +2,8 @@
 
 have fun kongz...runs p2k for you
 
+THIS WILL OVERPAY FOR GAS. I didnt feel like figuring it out at time of run, so I just defaulted to the same number. Thankfully, its matic chain so it does not really matter.
+
 https://lampandmaxaxiebot.notion.site/Windows-Install-Guide-5f09a3c782d342f9a1382c30217092d3
 alternate guide:
 
