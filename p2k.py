@@ -3,6 +3,7 @@ from web3 import Web3
 import json
 import concurrent.futures
 
+# If you enjoy using this script, bananas are much appreciated: 0xd32f25Dfa932b8064A81B8254E7997CAeBc85F97
 address = Web3.toChecksumAddress("")
 key = ""
 NUM_RUNS = 100
