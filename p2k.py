@@ -8,8 +8,8 @@ import concurrent.futures
 # I release this script for free and rely on the donations of my fellow Kongz.
 address = Web3.toChecksumAddress("")
 key = ""
-NUM_RUNS = 25
-TEAM_NUMBER = 2
+NUM_RUNS = 50
+TEAM_NUMBER = 0
 
 # Change the gas price if you want. I am not responsible for stuck txs if you decide to be cheap on gas.
 GAS_PRICE = 150
@@ -21,7 +21,7 @@ USE_FUEL_RODS = False
 # 1 = Cyber Fragment
 # 2 = Rainbow Crystal
 # 3 = Promethean Relic
-CHARM_TO_USE = 1
+CHARM_TO_USE = 0
 
 
 # DO NOT TOUCH ANYTHING BELOW THIS LINE
