@@ -1,124 +1,37 @@
 # AUTHOR: https://twitter.com/maxbrand99
 
 import math
+import time
 from web3 import Web3
 import concurrent.futures
+import requests
+import json
 
 # DONATIONS: 0xd32f25Dfa932b8064A81B8254E7997CAeBc85F97
 # I release this script for free and rely on the donations of my fellow Kongz.
 address = Web3.toChecksumAddress("")
 key = ""
-NUM_RUNS = 50
-TEAM_NUMBER = 0
+NUM_RUNS = 25
+TEAM_NUMBER = 1
 
 # Change the gas price if you want. I am not responsible for stuck txs if you decide to be cheap on gas.
-GAS_PRICE = 150
+GAS_PRICE = 100
 
 # Set this to true to use fuel rods
 USE_FUEL_RODS = False
 
-# 0 = No Charm
-# 1 = Cyber Fragment
-# 2 = Rainbow Crystal
-# 3 = Promethean Relic
-CHARM_TO_USE = 0
-
 
 # DO NOT TOUCH ANYTHING BELOW THIS LINE
 
-txs = []
 out = []
-
-
+requestsRan = []
 w3 = Web3(Web3.HTTPProvider('https://polygon-rpc.com/'))
-gameABI = '[{"inputs":[{"internalType":"uint256","name":"_teamId","type":"uint256"},{"internalType":"bool","name":"_energy","type":"bool"}],"name":"runAdventureVRF","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_teamId","type":"uint256"},{"internalType":"uint256","name":"_charm","type":"uint256"}],"name":"activateCharm","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"charmInUse","outputs":[{"internalType":"uint256","name":"charmType","type":"uint256"},{"internalType":"uint256","name":"hp","type":"uint256"}],"stateMutability":"view","type":"function"}]'
+gameABI = '[{"inputs":[{"internalType":"uint256","name":"_teamId","type":"uint256"},{"internalType":"bool","name":"_energy","type":"bool"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"queryManyAdventuresVRF","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_requestId","type":"uint256"}],"name":"settleAdventureRuns","outputs":[],"stateMutability":"nonpayable","type":"function"}]'
 gameAddress = Web3.toChecksumAddress("0x70C575588B98C1F46B1382c706AdAf398A874e3E")
 gameContract = w3.eth.contract(address=gameAddress, abi=gameABI)
-charmAddress = Web3.toChecksumAddress("0x7cBCCC4a1576d7A05eB6f6286206596BCBee14aC")
-charmABI = '[{"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]'
-charmContract = w3.eth.contract(address=charmAddress, abi=charmABI)
 
-if CHARM_TO_USE != 0:
-    if not CHARM_TO_USE in [1, 2, 3]:
-        print("INVALID CHARM NUMBER. PLEASE READ THE COMMENTS ON LINES 12-15!")
-        raise SystemExit
-    charmBalance = charmContract.functions.balanceOf(address, CHARM_TO_USE).call()
-    if charmBalance < math.ceil(NUM_RUNS / 50):
-        print("NOT ENOUGH CHARMS IN INVENTORY FOR THIS NUMBER OF RUNS. PLEASE GET MORE CHARMS OR REDUCE THE NUMBER OF RUNS.")
-        raise SystemExit
-    charmInUse = gameContract.functions.charmInUse(address, TEAM_NUMBER).call()
-    if not charmInUse[1] in [0, 1]:
-        print("THIS TEAM CURRENTLY HAS A CHARM THAT IS ALREADY IN USE. PLEASE SET CHARM NUMBER TO 0 AND RUN " + str(int(charmInUse[1] / 200)) + " MORE RUNS WITH BANANAS OR " + str(int(charmInUse[1] / (10000/30))) + " MORE RUNS WITH FUEL RODS.")
-        raise SystemExit
-    nonce = w3.eth.get_transaction_count(address)
-    completedRuns = 0
-    if not USE_FUEL_RODS:
-        for i in range(math.ceil(NUM_RUNS / 50)):
-            send_txn = gameContract.functions.activateCharm(TEAM_NUMBER, CHARM_TO_USE).buildTransaction({
-                'value': 0,
-                'chainId': 137,
-                'gas': 491337,
-                'gasPrice': Web3.toWei(GAS_PRICE, 'gwei'),
-                'nonce': nonce
-            })
-            signed_txn = w3.eth.account.sign_transaction(send_txn, private_key=key)
-            txs.append(signed_txn)
-            nonce += 1
-            for j in range(50):
-                if completedRuns == NUM_RUNS:
-                    break
-                completedRuns += 1
-                send_txn = gameContract.functions.runAdventureVRF(TEAM_NUMBER, USE_FUEL_RODS).buildTransaction({
-                    'value': 0,
-                    'chainId': 137,
-                    'gas': 491337,
-                    'gasPrice': Web3.toWei(GAS_PRICE, 'gwei'),
-                    'nonce': nonce
-                })
-                signed_txn = w3.eth.account.sign_transaction(send_txn, private_key=key)
-                txs.append(signed_txn)
-                nonce += 1
-    else:
-        for i in range(math.ceil(NUM_RUNS / 30)):
-            send_txn = gameContract.functions.activateCharm(TEAM_NUMBER, CHARM_TO_USE).buildTransaction({
-                'value': 0,
-                'chainId': 137,
-                'gas': 491337,
-                'gasPrice': Web3.toWei(GAS_PRICE, 'gwei'),
-                'nonce': nonce
-            })
-            signed_txn = w3.eth.account.sign_transaction(send_txn, private_key=key)
-            txs.append(signed_txn)
-            nonce += 1
-            for j in range(30):
-                if completedRuns == NUM_RUNS:
-                    break
-                completedRuns += 1
-                send_txn = gameContract.functions.runAdventureVRF(TEAM_NUMBER, USE_FUEL_RODS).buildTransaction({
-                    'value': 0,
-                    'chainId': 137,
-                    'gas': 491337,
-                    'gasPrice': Web3.toWei(GAS_PRICE, 'gwei'),
-                    'nonce': nonce
-                })
-                signed_txn = w3.eth.account.sign_transaction(send_txn, private_key=key)
-                txs.append(signed_txn)
-                nonce += 1
-else:
-    nonce = w3.eth.get_transaction_count(address)
-    for i in range(NUM_RUNS):
-        send_txn = gameContract.functions.runAdventureVRF(TEAM_NUMBER, USE_FUEL_RODS).buildTransaction({
-            'value': 0,
-            'chainId': 137,
-            'gas': 491337,
-            'gasPrice': Web3.toWei(GAS_PRICE, 'gwei'),
-            'nonce': nonce
-        })
-        signed_txn = w3.eth.account.sign_transaction(send_txn, private_key=key)
-        txs.append(signed_txn)
-        nonce += 1
 
-def load_url(signed_txn):
+def sendTxSingle(signed_txn):
     attempts = 0
     oldtx = w3.toHex(w3.keccak(signed_txn.rawTransaction))
     while attempts < 10:
@@ -139,14 +52,109 @@ def load_url(signed_txn):
         attempts += 1
     return w3.toHex(w3.keccak(signed_txn.rawTransaction))
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-    future_to_url = (executor.submit(load_url, tx) for tx in txs)
-    for future in concurrent.futures.as_completed(future_to_url):
-        try:
-            data = future.result()
-        except Exception as exc:
-            data = str(type(exc))
-        finally:
-            out.append(data)
-            print(out)
-            print(str(len(out)), end="\r")
+
+def getUncompleted(address, attempts=0):
+    url = "https://api.thegraph.com/subgraphs/name/clumsier/cyberkongz-polygon-subgraph"
+
+    payload = '{"query":"query getUncompletedRuns($user:String){multipleAdventuresRuns(where:{user:$user,ready:true,completed:false}){requestId,team{id}}}","variables":{"user":"' + str(address).lower() + '"}}'
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    try:
+        json_data = json.loads(response.text)
+        if 'data' in json_data:
+            return json_data
+    except Exception as e:
+        if attempts > 3:
+            print("Could not get uncompleted runs, something is wrong")
+            print(e)
+            print(response)
+            print(response.text)
+            raise SystemExit
+        else:
+            return getUncompleted(attempts + 1)
+
+
+def sendTxBatch(txs):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+        future_to_url = (executor.submit(sendTxSingle, tx) for tx in txs)
+        for future in concurrent.futures.as_completed(future_to_url):
+            try:
+                data = future.result()
+            except Exception as exc:
+                data = str(type(exc))
+            finally:
+                out.append(data)
+                print(out)
+                print(str(len(out)), end="\r")
+
+
+def initRuns():
+    txs = []
+    nonce = w3.eth.get_transaction_count(address)
+    startedRuns = 0
+    batchesStarted = 0
+    for i in range(math.floor(NUM_RUNS / 25)):
+        startedRuns += 25
+        batchesStarted += 1
+        send_txn = gameContract.functions.queryManyAdventuresVRF(TEAM_NUMBER, USE_FUEL_RODS, 25).buildTransaction({
+            'value': 0,
+            'chainId': 137,
+            'gas': 491337,
+            'gasPrice': Web3.toWei(GAS_PRICE, 'gwei'),
+            'nonce': nonce
+        })
+        signed_txn = w3.eth.account.sign_transaction(send_txn, private_key=key)
+        txs.append(signed_txn)
+        nonce += 1
+    if NUM_RUNS != startedRuns:
+        batchesStarted += 1
+        send_txn = gameContract.functions.queryManyAdventuresVRF(TEAM_NUMBER, USE_FUEL_RODS, NUM_RUNS - startedRuns).buildTransaction({
+            'value': 0,
+            'chainId': 137,
+            'gas': 491337,
+            'gasPrice': Web3.toWei(GAS_PRICE, 'gwei'),
+            'nonce': nonce
+        })
+        signed_txn = w3.eth.account.sign_transaction(send_txn, private_key=key)
+        txs.append(signed_txn)
+        nonce += 1
+
+    sendTxBatch(txs)
+    return batchesStarted
+
+
+def finalizeRuns(batchesStarted):
+    txs = []
+    nonce = w3.eth.get_transaction_count(address)
+    while batchesStarted > 0:
+        uncompleted = getUncompleted(address)
+        if len(uncompleted['data']['multipleAdventuresRuns']) > 0:
+            for request in uncompleted['data']['multipleAdventuresRuns']:
+                if request['requestId'] in requestsRan:
+                    continue
+                send_txn = gameContract.functions.settleAdventureRuns(int(request['requestId'])).buildTransaction({
+                    'value': 0,
+                    'chainId': 137,
+                    'gas': 3491337,
+                    'gasPrice': Web3.toWei(GAS_PRICE, 'gwei'),
+                    'nonce': nonce
+                })
+                signed_txn = w3.eth.account.sign_transaction(send_txn, private_key=key)
+                txs.append(signed_txn)
+                nonce += 1
+                batchesStarted -= 1
+                requestsRan.append(request['requestId'])
+        else:
+            print("Waiting 10 seconds for chainlink VRF")
+            time.sleep(10)
+    sendTxBatch(txs)
+
+
+uncompleted = getUncompleted(address)
+if len(uncompleted['data']['multipleAdventuresRuns']) > 0:
+    finalizeRuns(len(uncompleted['data']['multipleAdventuresRuns']))
+batchesStarted = initRuns()
+finalizeRuns(batchesStarted)
