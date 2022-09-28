@@ -2,6 +2,12 @@
 
 have fun kongz...runs p2k for you
 
+CHARMZ SUPPORT HAS BEEN REMOVED. 
+Because you are now able to add as many charmz as you want at a time, apply them via UI before running it.
+
+Runs batches of 25 at a time, and then will finish any remaining runs (30 runs = batch of 25 then batch of 5).
+After doing the runs, it waits for chainlink and then finalizes the runs.
+
 THIS WILL OVERPAY FOR GAS. I didnt feel like figuring it out at time of run, so I just defaulted to the same number. Thankfully, its matic chain so it does not really matter.
 
 https://lampandmaxaxiebot.notion.site/Windows-Install-Guide-5f09a3c782d342f9a1382c30217092d3
